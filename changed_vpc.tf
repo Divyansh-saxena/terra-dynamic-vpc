@@ -60,6 +60,6 @@ resource "aws_route_table" "main-public" {
 # route_table_association with public subnet
 resource "aws_route_table_association" "main-public-route" {
     count= length(var.cidr_block_public)
-    subnet_id = "${aws_subnet.public-subnet[count.index].id}"
+    subnet_id = "${aws_subnet.public-subnet[count.index].id}" # or element( aws_subnet.public-subnet.*.id , count.index)
     route_table_id = "${aws_route_table.main-public.id}"
 }
