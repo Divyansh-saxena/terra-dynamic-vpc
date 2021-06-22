@@ -1,4 +1,4 @@
-
+#VPC creation
 resource "aws_vpc" "main-vpc" {
     cidr_block = "10.0.0.0/16"
     instance_tenancy = "default"
@@ -10,6 +10,7 @@ resource "aws_vpc" "main-vpc" {
     }
 }
 
+# public subnet
 resource "aws_subnet" "public-subnet" {
     count= length(var.cidr_block_public)
     vpc_id = "${aws_vpc.main-vpc.id}"
@@ -22,6 +23,7 @@ resource "aws_subnet" "public-subnet" {
     }
 }
 
+# private subnet
 resource "aws_subnet" "private-subnet" {
     count= length(var.cidr_block_private)
     vpc_id = "${aws_vpc.main-vpc.id}"
@@ -34,6 +36,7 @@ resource "aws_subnet" "private-subnet" {
     }
 }
 
+# internet gateway for internet connectivity in public subnet
 resource "aws_internet_gateway" "main-gw" {
     vpc_id = "${aws_vpc.main-vpc.id}"
 
@@ -42,7 +45,7 @@ resource "aws_internet_gateway" "main-gw" {
     }
 }
 
-### route tables
+# route table
 resource "aws_route_table" "main-public" {
     vpc_id = "${aws_vpc.main-vpc.id}"
     route {
@@ -54,7 +57,7 @@ resource "aws_route_table" "main-public" {
         Name = "Test-${var.ENV}-vpc"
     }
 }
-
+# route_table_association with public subnet
 resource "aws_route_table_association" "main-public-route" {
     count= length(var.cidr_block_public)
     subnet_id = "${aws_subnet.public-subnet[count.index].id}"
